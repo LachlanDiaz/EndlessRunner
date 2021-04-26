@@ -5,12 +5,33 @@ class Player extends Phaser.GameObjects.Sprite {
 
         //add object to existing scene
         scene.add.existing(this);
-        this.moveSpeed = 1; //pixels per frame
+        this.jumped = false;
+        this.apex = false;
+        this.moveSpeed = 2; //pixels per frame
     }
 
     update() {
 
-        this.y += this.moveSpeed;
+        if (!this.jumped && !this.apex) {
+            this.y += this.moveSpeed;
+        } else if (this.jumped && !this.apex) {
+            this.y += this.moveSpeed;
+            this.moveSpeed -= .2;
+            console.log (this.moveSpeed);
+            if (this.moveSpeed < -3) {
+                this.apex = true;
+            }
+        }
+
+        if (this.apex) {
+            this.y += this.moveSpeed;
+            if (this.moveSpeed < 2) {
+                this.moveSpeed += .2;
+            } else {
+                this.jumped = false;
+                this.apex = false;
+            }
+        }
 
         //left/right movement
         if(keyLEFT.isDown && this.x >= borderUISize + this.width) {
@@ -19,7 +40,8 @@ class Player extends Phaser.GameObjects.Sprite {
             this.x += this.moveSpeed
         }
 
-        this.y += this.moveSpeed;
-
+        if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+            this.jumped = true;
+        }
     }
 }
