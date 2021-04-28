@@ -11,6 +11,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+
+
+        this.physics.world.gravity.y = 2600;
+
         //place well background
         this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
 
@@ -18,22 +22,26 @@ class Play extends Phaser.Scene {
         this.player = new Player(this, game.config.width/2, 0, 'player').setOrigin(0.5, 0);
 
 
+        this.ground = this.add.group();
+        for(let i = 0; i < game.config.width; i += tileSize) {
+            let groundTile = this.physics.add.sprite(i, game.config.height - 480, 'platformer_atlas', 'block').setScale(SCALE).setOrigin(0);
+            groundTile.body.immovable = true;
+            groundTile.body.allowGravity = false;
+            this.ground.add(groundTile);
+        }
+
+        this.alien = this.physics.add.sprite(240, game.config.height - 550, 'platformer_atlas', 'side').setScale(SCALE);
+
+        this.physics.add.collider(this.alien, this.ground);
+
+
+
+
         //define keys
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-
-        //animation config
-        this.anims.create({
-            key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosion', {
-                start: 0,
-                end: 9,
-                first: 0
-            }),
-            frameRate: 30
-        });
 
         // display score
         let scoreConfig = {
