@@ -18,6 +18,7 @@ let config = {
 
 let game = new Phaser.Game(config);
 
+let cursors;
 let borderUISize = game.config.height / 15;
 let borderPadding = borderUISize / 3;
 let starSpeed = 4;

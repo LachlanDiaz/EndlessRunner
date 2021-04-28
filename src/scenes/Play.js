@@ -12,15 +12,14 @@ class Play extends Phaser.Scene {
 
     create() {
 
-
-        this.physics.world.gravity.y = 2600;
+        // variables and settings
+        this.JUMP_VELOCITY = -200;
+        this.ACCELERATION = 200;
+        this.DRAG = 100;    // DRAG < ACCELERATION = icy slide
+        this.physics.world.gravity.y = 200;
 
         //place well background
         this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
-
-        // add rocket (player 1)
-        this.player = new Player(this, game.config.width/2, 0, 'player').setOrigin(0.5, 0);
-
 
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
@@ -30,7 +29,11 @@ class Play extends Phaser.Scene {
             this.ground.add(groundTile);
         }
 
+        cursors = this.input.keyboard.createCursorKeys();
+
         this.alien = this.physics.add.sprite(240, game.config.height - 550, 'platformer_atlas', 'side').setScale(SCALE);
+        this.alien.setCollideWorldBounds(true);
+        this.alien.setMaxVelocity(100, 1000000);
 
         this.physics.add.collider(this.alien, this.ground);
 
@@ -70,31 +73,30 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        // check key input for restart
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-        this.scene.restart();
-        }
 
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            this.scene.start("menuScene");
-        }
-        this.well.tilePositionY -= starSpeed;
 
-        if (!this.gameOver) {
-            //update rocket and ships
-            this.player.update();
-        }
-    }
-
-    checkCollision(rocket, ship) {
-        //simple AABB checking
-        if(rocket.x < ship.x + ship.width &&
-            rocket.x - rocket.width > ship.x &&
-            rocket.y < ship.y + ship.height &&
-            rocket.height + rocket.y > ship.y) {
-                return true;
+         // check keyboard input
+         if(cursors.left.isDown) {
+            this.alien.body.setAccelerationX(-this.ACCELERATION);
+            this.alien.setFlip(true, false);
+            // see: https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Components.Animation.html#play__anchor
+            // play(key [, ignoreIfPlaying] [, startFrame])
+        } else if(cursors.right.isDown) {
+            this.alien.body.setAccelerationX(this.ACCELERATION);
+            this.alien.resetFlip();
         } else {
-            return false;
+            // set acceleration to 0 so DRAG will take over
+            this.alien.body.setAccelerationX(0);
+            this.alien.body.setDragX(this.DRAG);
         }
+
+        if(this.alien.body.touching.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
+            this.alien.body.velocity.y = this.JUMP_VELOCITY;
+        } else {
+            this.alien.body.setMaxSpeed(100);
+        }
+        
+        console.log(this.alien.velocity)
+        this.well.tilePositionY -= starSpeed;
     }
 }
