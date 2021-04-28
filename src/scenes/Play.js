@@ -6,30 +6,13 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('starfield', './assets/starfield.png');
+        this.load.image('well', './assets/well.png');
         this.load.image('player', './assets/Asteriod(Round).png');
-        // load spritesheet
-        this.load.spritesheet('explosion', './assets/explosion.png', {
-            frameWidth: 64,
-            frameHeight: 32,
-            startFrame: 0,
-            endFrame: 9
-        });
     }
 
     create() {
-        //place starfield
-        this.starfield = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'starfield').setOrigin(0, 0);
-
-        //green UI background
-        this.add.rectangle(0, borderUISize + borderPadding, game.config.width,
-        borderUISize * 2, 0x00FF00).setOrigin(0,0);
-
-        //boarders
-        this.add.rectangle(0,0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0,0);
-        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0,0);
-        this.add.rectangle(0,0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
-        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
+        //place well background
+        this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
 
         // add rocket (player 1)
         this.player = new Player(this, game.config.width/2, 0, 'player').setOrigin(0.5, 0);
@@ -87,7 +70,7 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
         }
-        this.starfield.tilePositionX -= starSpeed;
+        this.well.tilePositionY -= starSpeed;
 
         if (!this.gameOver) {
             //update rocket and ships
