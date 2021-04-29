@@ -13,10 +13,14 @@ class Play extends Phaser.Scene {
     create() {
 
         // variables and settings
-        this.JUMP_VELOCITY = -200;
+        this.JUMP_VELOCITY = 200;
         this.ACCELERATION = 200;
-        this.DRAG = 100;    // DRAG < ACCELERATION = icy slide
+        this.DRAG = 200;    // DRAG < ACCELERATION = icy slide
         this.physics.world.gravity.y = 200;
+
+        this.jumped = false;
+        this.apex = false;
+        this.moveSpeed = fallspeed; //pixels per frame
 
         //place well background
         this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
@@ -90,13 +94,40 @@ class Play extends Phaser.Scene {
             this.alien.body.setDragX(this.DRAG);
         }
 
-        if(this.alien.body.touching.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
+        /*if(this.alien.body.touching.down && Phaser.Input.Keyboard.JustDown(cursors.space)) {
             this.alien.body.velocity.y = this.JUMP_VELOCITY;
         } else {
             this.alien.body.setMaxSpeed(100);
         }
         
         console.log(this.alien.velocity)
-        this.well.tilePositionY -= starSpeed;
+        */
+        
+
+        if (!this.jumped && !this.apex) {
+            this.well.tilePositionY += this.moveSpeed;
+        } else if (this.jumped && !this.apex) {
+            this.well.tilePositionY += this.moveSpeed;
+            this.moveSpeed -= (fallspeed / 10);
+            console.log (this.moveSpeed);
+            if (this.moveSpeed < (fallspeed * -1.5)) {
+                this.apex = true;
+            }
+        }
+
+        if (this.apex) {
+            this.well.tilePositionY += this.moveSpeed;
+            if (this.moveSpeed < fallspeed) {
+                this.moveSpeed += (fallspeed / 10);
+            } else {
+                this.jumped = false;
+                this.apex = false;
+            }
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+            this.jumped = true;
+        }
+        //this.well.tilePositionY += this.alien.body.velocity.y / 10;
     }
 }

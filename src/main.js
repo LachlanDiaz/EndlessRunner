@@ -21,7 +21,7 @@ let game = new Phaser.Game(config);
 let cursors;
 let borderUISize = game.config.height / 15;
 let borderPadding = borderUISize / 3;
-let starSpeed = 4;
+let fallspeed = 4;
 const tileSize = 20;
 const SCALE = 0.5;
 
