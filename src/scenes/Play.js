@@ -8,6 +8,10 @@ class Play extends Phaser.Scene {
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('well', './assets/well.png');
         this.load.image('player', './assets/Asteriod(Round).png');
+        /*  Load sprite atlas. Kendrick's note: currently dont have dedicated load scene, not sure how u wanna handle
+            scenes but we may want to create a separate load.js if we use dif scenes for tutorial(well)/game(cave)
+        */
+        this.load.atlas('sprite_atlas', './assets/sprite_atlas.png', './assets/sprites.json');
     }
 
     create() {
@@ -34,15 +38,56 @@ class Play extends Phaser.Scene {
         }
 
         cursors = this.input.keyboard.createCursorKeys();
+        
+        /* create player and declare sprite */
+        this.guy = this.physics.add.sprite(240, game.config.height - 550, 'sprite_atlas', 'fall01').setScale(SCALE);
+        this.guy.setCollideWorldBounds(true);
+        this.guy.setMaxVelocity(100, 1000000);
 
-        this.alien = this.physics.add.sprite(240, game.config.height - 550, 'platformer_atlas', 'side').setScale(SCALE);
-        this.alien.setCollideWorldBounds(true);
-        this.alien.setMaxVelocity(100, 1000000);
+        this.physics.add.collider(this.guy, this.ground);
 
-        this.physics.add.collider(this.alien, this.ground);
+        //Set up Animations - note: 'fall' is the "idle" animation
+        this.anims.create({
+            key: 'fall',
+            frames: this.anims.generateFrameNames('sprite_atlas', {
+                prefix: 'fall',
+                start: 1,
+                end: 2,
+                suffix: '',
+                zeroPad: 2
+            }),
+            frameRate: 12,
+            repeat: -1
+        });
+        
+        //temp jump anim, only 1 frame :(
+        this.anims.create({
+            key: 'jump',
+            defaultTextureKey: 'sprite_atlas',
+            frames: [
+                { frame: 'jump01' }, { frame: 'jump02' }
+            ],
+            frameRate: 1
+        });
+        
 
 
+        //ignore for now
+        /*this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNames('sprite_atlas', {
+                prefix: 'jump',
+                suffix: '',
+                zeroPad: 2
+                frames: []
+            }),
+            frameRate: 10,
+            repeat: 0
+        })*/
 
+
+        //begin playing fall animation because it is constant except when jumping
+        this.guy.anims.play('fall');
 
         //define keys
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -78,20 +123,19 @@ class Play extends Phaser.Scene {
 
     update() {
 
-
          // check keyboard input
          if(cursors.left.isDown) {
-            this.alien.body.setAccelerationX(-this.ACCELERATION);
-            this.alien.setFlip(true, false);
+            this.guy.body.setAccelerationX(-this.ACCELERATION);
+            this.guy.setFlip(true, false);
             // see: https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Components.Animation.html#play__anchor
             // play(key [, ignoreIfPlaying] [, startFrame])
         } else if(cursors.right.isDown) {
-            this.alien.body.setAccelerationX(this.ACCELERATION);
-            this.alien.resetFlip();
+            this.guy.body.setAccelerationX(this.ACCELERATION);
+            this.guy.resetFlip();
         } else {
             // set acceleration to 0 so DRAG will take over
-            this.alien.body.setAccelerationX(0);
-            this.alien.body.setDragX(this.DRAG);
+            this.guy.body.setAccelerationX(0);
+            this.guy.body.setDragX(this.DRAG);
         }
 
         /*if(this.alien.body.touching.down && Phaser.Input.Keyboard.JustDown(cursors.space)) {
@@ -107,6 +151,7 @@ class Play extends Phaser.Scene {
         if (!this.jumped && !this.apex) {
             this.well.tilePositionY += this.moveSpeed;
         } else if (this.jumped && !this.apex) {
+            this.guy.anims.play('jump');                        //jump anim
             this.well.tilePositionY += this.moveSpeed;
             this.moveSpeed -= (fallspeed / 10);
             console.log (this.moveSpeed);
@@ -123,6 +168,7 @@ class Play extends Phaser.Scene {
                 this.jumped = false;
                 this.apex = false;
             }
+            this.guy.anims.play('fall');                    //resume idle fall anim
         }
 
         if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
