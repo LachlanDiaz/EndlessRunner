@@ -12,6 +12,7 @@ class Play extends Phaser.Scene {
             scenes but we may want to create a separate load.js if we use dif scenes for tutorial(well)/game(cave)
         */
         this.load.atlas('sprite_atlas', './assets/sprite_atlas.png', './assets/sprites.json');
+        this.load.audio('bgm_01', './assets/Falling.wav');
     }
 
     create() {
@@ -28,6 +29,11 @@ class Play extends Phaser.Scene {
 
         //place well background
         this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
+
+        //add music and play
+        this.bgMusic = this.sound.add('bgm_01', {volume: 0.25});
+        this.bgMusic.loop = true;
+        this.bgMusic.play();
 
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
@@ -46,6 +52,15 @@ class Play extends Phaser.Scene {
 
         this.physics.add.collider(this.guy, this.ground);
 
+        /* Create branch and place in scene */
+        this.branch01 = this.physics.add.sprite(240, game.config.height - 550, 'sprite_atlas', 'branch_01').setScale(SCALE);
+        this.branch01.setCollideWorldBounds(false);
+        this.branch01.body.allowGravity = false;
+        this.branch01.setVelocityY(-this.moveSpeed * 60);
+
+        this.physics.add.collider(this.guy, this.branch01);
+
+
         //Set up Animations - note: 'fall' is the "idle" animation
         this.anims.create({
             key: 'fall',
@@ -60,7 +75,7 @@ class Play extends Phaser.Scene {
             repeat: -1
         });
         
-        //temp jump anim, only 1 frame :(
+        //jump anim, current issue: only one frame plays due to slow initial anim cycle
         this.anims.create({
             key: 'jump',
             defaultTextureKey: 'sprite_atlas',
@@ -69,22 +84,6 @@ class Play extends Phaser.Scene {
             ],
             frameRate: 1
         });
-        
-
-
-        //ignore for now
-        /*this.anims.create({
-            key: 'jump',
-            frames: this.anims.generateFrameNames('sprite_atlas', {
-                prefix: 'jump',
-                suffix: '',
-                zeroPad: 2
-                frames: []
-            }),
-            frameRate: 10,
-            repeat: 0
-        })*/
-
 
         //begin playing fall animation because it is constant except when jumping
         this.guy.anims.play('fall');
@@ -147,13 +146,15 @@ class Play extends Phaser.Scene {
         console.log(this.alien.velocity)
         */
         
-
+        
         if (!this.jumped && !this.apex) {
             this.well.tilePositionY += this.moveSpeed;
+            this.branch01.setVelocityY(-this.moveSpeed * 60);       //branch velocity updated every frame
         } else if (this.jumped && !this.apex) {
-            this.guy.anims.play('jump');                        //jump anim
+            this.guy.anims.play('jump');                            //jump anim
             this.well.tilePositionY += this.moveSpeed;
             this.moveSpeed -= (fallspeed / 10);
+            this.branch01.setVelocityY(-this.moveSpeed * 60);
             console.log (this.moveSpeed);
             if (this.moveSpeed < (fallspeed * -1.5)) {
                 this.apex = true;
@@ -164,6 +165,7 @@ class Play extends Phaser.Scene {
             this.well.tilePositionY += this.moveSpeed;
             if (this.moveSpeed < fallspeed) {
                 this.moveSpeed += (fallspeed / 10);
+                this.branch01.setVelocityY(-this.moveSpeed * 60);
             } else {
                 this.jumped = false;
                 this.apex = false;
@@ -175,5 +177,9 @@ class Play extends Phaser.Scene {
             this.jumped = true;
         }
         //this.well.tilePositionY += this.alien.body.velocity.y / 10;
+
+        // wrap physics object(s) .wrap(gameObject, padding)
+        this.physics.world.wrap(this.branch01);
+
     }
 }
