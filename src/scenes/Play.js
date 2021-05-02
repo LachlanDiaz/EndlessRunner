@@ -57,6 +57,7 @@ class Play extends Phaser.Scene {
         this.branch01.setCollideWorldBounds(false);
         this.branch01.body.allowGravity = false;
         this.branch01.setVelocityY(-this.moveSpeed * 60);
+        this.branch01.setMaxVelocity(0, 1000000);
 
         this.physics.add.collider(this.guy, this.branch01);
 
