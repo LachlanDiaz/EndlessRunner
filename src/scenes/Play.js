@@ -12,6 +12,7 @@ class Play extends Phaser.Scene {
             scenes but we may want to create a separate load.js if we use dif scenes for tutorial(well)/game(cave)
         */
         this.load.atlas('sprite_atlas', './assets/sprite_atlas.png', './assets/sprites.json');
+        this.load.audio('bgm_01', './assets/Falling.wav');
     }
 
     create() {
@@ -28,6 +29,11 @@ class Play extends Phaser.Scene {
 
         //place well background
         this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
+
+        //add music and play
+        this.bgMusic = this.sound.add('bgm_01', {volume: 0.25});
+        this.bgMusic.loop = true;
+        this.bgMusic.play();
 
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
@@ -141,12 +147,11 @@ class Play extends Phaser.Scene {
         */
         
         
-        
         if (!this.jumped && !this.apex) {
             this.well.tilePositionY += this.moveSpeed;
-            this.branch01.setVelocityY(-this.moveSpeed * 60);
+            this.branch01.setVelocityY(-this.moveSpeed * 60);       //branch velocity updated every frame
         } else if (this.jumped && !this.apex) {
-            this.guy.anims.play('jump');                        //jump anim
+            this.guy.anims.play('jump');                            //jump anim
             this.well.tilePositionY += this.moveSpeed;
             this.moveSpeed -= (fallspeed / 10);
             this.branch01.setVelocityY(-this.moveSpeed * 60);
