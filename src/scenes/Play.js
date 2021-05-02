@@ -50,7 +50,7 @@ class Play extends Phaser.Scene {
         this.branch01 = this.physics.add.sprite(240, game.config.height - 550, 'sprite_atlas', 'branch_01').setScale(SCALE);
         this.branch01.setCollideWorldBounds(false);
         this.branch01.body.allowGravity = false;
-        this.branch01.setVelocityY(-this.moveSpeed);
+        this.branch01.setVelocityY(-this.moveSpeed * 60);
 
         this.physics.add.collider(this.guy, this.branch01);
 
@@ -144,12 +144,12 @@ class Play extends Phaser.Scene {
         
         if (!this.jumped && !this.apex) {
             this.well.tilePositionY += this.moveSpeed;
-            //this.physics.branch01.y += this.moveSpeed;
+            this.branch01.setVelocityY(-this.moveSpeed * 60);
         } else if (this.jumped && !this.apex) {
             this.guy.anims.play('jump');                        //jump anim
             this.well.tilePositionY += this.moveSpeed;
-            //this.physics.branch01.y += this.moveSpeed;
             this.moveSpeed -= (fallspeed / 10);
+            this.branch01.setVelocityY(-this.moveSpeed * 60);
             console.log (this.moveSpeed);
             if (this.moveSpeed < (fallspeed * -1.5)) {
                 this.apex = true;
@@ -160,6 +160,7 @@ class Play extends Phaser.Scene {
             this.well.tilePositionY += this.moveSpeed;
             if (this.moveSpeed < fallspeed) {
                 this.moveSpeed += (fallspeed / 10);
+                this.branch01.setVelocityY(-this.moveSpeed * 60);
             } else {
                 this.jumped = false;
                 this.apex = false;
