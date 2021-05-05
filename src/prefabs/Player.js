@@ -40,8 +40,9 @@ class Player extends Phaser.GameObjects.Sprite {
             this.x += this.moveSpeed
         }
 
-        if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+        //if(cursors.space.isDown) {
+            //Phaser.Input.Keyboard.JustDown(cursors.up)
             this.jumped = true;
-        }
+        //}
     }
 }

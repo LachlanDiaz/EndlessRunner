@@ -46,18 +46,32 @@ class Play extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
         
         /* create player and declare sprite */
-        this.guy = this.physics.add.sprite(240, game.config.height - 550, 'sprite_atlas', 'fall01').setScale(SCALE);
+        this.guy = this.physics.add.sprite(240, game.config.height - 550, 'sprite_atlas', 'fall01').setScale();
         this.guy.setCollideWorldBounds(true);
         this.guy.setMaxVelocity(100, 1000000);
 
         this.physics.add.collider(this.guy, this.ground);
 
         /* Create branch and place in scene */
-        this.branch01 = this.physics.add.sprite(240, game.config.height - 550, 'sprite_atlas', 'branch_01').setScale(SCALE);
+        this.branch01 = this.physics.add.sprite(400, game.config.height + 500, 'sprite_atlas', 'branch_01').setScale();
         this.branch01.setCollideWorldBounds(false);
         this.branch01.body.allowGravity = false;
         this.branch01.setVelocityY(-this.moveSpeed * 60);
         this.branch01.setMaxVelocity(0, 1000000);
+        
+
+        //create 2nd branch on the left side of the screen 
+
+        /*
+        this.branch02 = this.physics.add.sprite(80, game.config.height + 500, 'sprite_atlas', 'branch_01').setScale();
+        this.branch02.setCollideWorldBounds(false);
+        this.branch02.body.allowGravity = false;
+        this.branch02.setVelocityY(-this.moveSpeed * 60);
+        this.branch02.setMaxVelocity(0, 1000000);
+        this.branch02.setFlip(true, false);
+        */
+
+        //this.branch = new Branch(this, 1);
 
         this.physics.add.collider(this.guy, this.branch01);
 
@@ -67,12 +81,12 @@ class Play extends Phaser.Scene {
             key: 'fall',
             frames: this.anims.generateFrameNames('sprite_atlas', {
                 prefix: 'fall',
-                start: 1,
+                start: 0,
                 end: 2,
                 suffix: '',
                 zeroPad: 2
             }),
-            frameRate: 12,
+            frameRate: 4,
             repeat: -1
         });
         
@@ -83,7 +97,7 @@ class Play extends Phaser.Scene {
             frames: [
                 { frame: 'jump01' }, { frame: 'jump02' }
             ],
-            frameRate: 1
+            frameRate: 12
         });
 
         //begin playing fall animation because it is constant except when jumping
@@ -112,6 +126,12 @@ class Play extends Phaser.Scene {
         // GAME OVER flag
         this.gameOver = false;
 
+        this.spawn();
+
+        this.branchGroup = this.add.group({
+            runChildUpdate: true    // make sure update runs on group children
+        });
+
         //play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
@@ -121,17 +141,34 @@ class Play extends Phaser.Scene {
         }, null, this);
     }
 
+    addBranch() {
+        let invert =  Phaser.Math.Between(0, 1);
+        let branch = new Branch(this, invert);
+        this.physics.add.collider(this.guy, branch);
+        this.branchGroup.add(branch);
+    }
+
+    spawn() {
+        let delay = Phaser.Math.Between(600,1000)
+        this.time.delayedCall(delay, () => { 
+            this.addBranch(); 
+            this.spawn();
+        });
+    }
+
     update() {
 
+        //console.log ("AAAAHHH");
          // check keyboard input
          if(cursors.left.isDown) {
             this.guy.body.setAccelerationX(-this.ACCELERATION);
-            this.guy.setFlip(true, false);
             // see: https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Components.Animation.html#play__anchor
             // play(key [, ignoreIfPlaying] [, startFrame])
+            this.guy.resetFlip();
         } else if(cursors.right.isDown) {
             this.guy.body.setAccelerationX(this.ACCELERATION);
-            this.guy.resetFlip();
+
+            this.guy.setFlip(true, false);
         } else {
             // set acceleration to 0 so DRAG will take over
             this.guy.body.setAccelerationX(0);
@@ -152,11 +189,11 @@ class Play extends Phaser.Scene {
             this.well.tilePositionY += this.moveSpeed;
             this.branch01.setVelocityY(-this.moveSpeed * 60);       //branch velocity updated every frame
         } else if (this.jumped && !this.apex) {
-            this.guy.anims.play('jump');                            //jump anim
+                                       //jump anim
             this.well.tilePositionY += this.moveSpeed;
             this.moveSpeed -= (fallspeed / 10);
             this.branch01.setVelocityY(-this.moveSpeed * 60);
-            console.log (this.moveSpeed);
+            //console.log (this.moveSpeed);
             if (this.moveSpeed < (fallspeed * -1.5)) {
                 this.apex = true;
             }
@@ -174,13 +211,14 @@ class Play extends Phaser.Scene {
             this.guy.anims.play('fall');                    //resume idle fall anim
         }
 
-        if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+        if (cursors.space.isDown) {
+            this.guy.anims.play('jump'); 
             this.jumped = true;
         }
         //this.well.tilePositionY += this.alien.body.velocity.y / 10;
 
         // wrap physics object(s) .wrap(gameObject, padding)
-        this.physics.world.wrap(this.branch01);
+        //this.physics.world.wrap(this.branch01);
 
     }
 }
