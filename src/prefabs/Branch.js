@@ -1,6 +1,6 @@
 class Branch extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, invert, frame) {
-        super(scene, (invert === 0) ? 400 : 80,  game.config.height + 500, 'sprite_atlas', 'branch_01').setScale(), frame;
+        super(scene, (invert === 0) ? 400 : 80,  game.config.height + 500, 'sprite_atlas', 'branch01').setScale(), frame;
 
         this.jumped = false;
         this.apex = false;

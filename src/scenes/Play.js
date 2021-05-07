@@ -60,7 +60,7 @@ class Play extends Phaser.Scene {
             key: 'fall',
             frames: this.anims.generateFrameNames('sprite_atlas', {
                 prefix: 'fall',
-                start: 0,
+                start: 1,
                 end: 2,
                 suffix: '',
                 zeroPad: 2
@@ -78,6 +78,17 @@ class Play extends Phaser.Scene {
             ],
             frameRate: 12
         });
+
+        /*                  BAT ANIM CODE HERE
+        this.anims.create({
+            key: 'bat',
+            defaultTextureKey: 'sprite_atlas',
+            frames: [
+                { frame: 'bat01' }, { frame: 'bat02' }, { frame: 'bat03' }, { frame: 'bat02' }
+            ],
+            frameRate: 15
+        });
+        */
 
         //begin playing fall animation because it is constant except when jumping
         this.guy.anims.play('fall');
