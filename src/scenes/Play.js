@@ -120,6 +120,15 @@ class Play extends Phaser.Scene {
         }, null, this);
 
         this.fallRight = this.add.text(game.config.width - borderUISize - borderPadding - 120, borderUISize + borderPadding*2, this.fall_distance + "m", scoreConfig);
+
+
+        this.input.once('pointerup', function () {
+
+            
+            this.scene.launch('pauseScene'); 
+            this.scene.pause();
+
+        }, this);
     }
 
     addBranch() {
@@ -139,7 +148,6 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-
 
         this.fall_distance = Math.trunc(8 * this.clock.getElapsedSeconds() + this.moveSpeed);
 
@@ -214,4 +222,22 @@ class Play extends Phaser.Scene {
         this.death_flag = true;
 
     }
+}
+
+class Pause extends Phaser.Scene {
+    constructor() {
+        super("pauseScene");
+    }
+
+    create()
+    {
+        console.log("scene B");
+        this.input.once('pointerdown', function () {
+
+            this.scene.resume('playScene');
+            this.scene.stop();
+
+        }, this);
+    }
+
 }
