@@ -37,7 +37,7 @@ class Play extends Phaser.Scene {
 
 
 
-        this.time.delayedCall(2000, () => { this.physics.world.gravity.y = 200; });
+        this.time.delayedCall(4000, () => { this.physics.world.gravity.y = 100; });
 
 
 
@@ -269,7 +269,7 @@ class Play extends Phaser.Scene {
             }
 
             if (this.guy.y >= game.config.height - 200) {
-                this.guy.setCollideWorldBounds(false);
+                this.transition();
             }
 
             if (!this.death_flag) {
@@ -280,6 +280,23 @@ class Play extends Phaser.Scene {
         else {
             this.well.tilePositionY += fallspeed;
         }
+    }
+
+
+    transition() {
+        this.guy.setCollideWorldBounds(false);
+
+        this.death_flag = true;
+
+        // add tween to fade out audio
+        this.tweens.add({
+            targets: this.bgMusic,
+            volume: 0,
+            ease: 'Linear',
+            duration: 1000,
+        });
+
+        this.time.delayedCall(1000, () => { this.scene.start('menuScene'); });
     }
 
     death() {
@@ -333,6 +350,7 @@ class Play extends Phaser.Scene {
         
 
         this.time.delayedCall(2000, () => { this.scene.start('menuScene'); });
+        //this.scene.stop();
 
     }
 }
