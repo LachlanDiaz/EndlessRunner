@@ -9,12 +9,21 @@
         body {
             background-color: #100c25;
         }
+        @font-face {
+        font-family: font1;
+        src: url('./assets/CaslonAntique.ttf');
+        font-weight:400;
+        font-weight:normal;
+        }
     </style>
+    
 </head>
 <body>
+    <div style="font-family:font1; position:absolute; left:-1000px; visibility:hidden;">.</div>
     <script src="./lib/phaser.js"></script>
     <script src="./src/prefabs/Player.js"></script>
     <script src="./src/prefabs/Branch.js"></script>
+    <script src="./src/prefabs/Bat.js"></script>
     <script src="./src/scenes/Menu.js"></script>
     <script src="./src/scenes/Play.js"></script>
     <script src="./src/main.js"></script>

@@ -1,6 +1,6 @@
-class Play extends Phaser.Scene {
+class Play2 extends Phaser.Scene {
     constructor() {
-        super("playScene");
+        super("play2Scene");
     }
 
     preload() {
@@ -27,21 +27,7 @@ class Play extends Phaser.Scene {
         this.DRAG = 200;    // DRAG < ACCELERATION = icy slide
         
 
-
-
-        // delayed calls for tutorial
-        this.time.delayedCall(100, () => {
-            this.scene.launch('pauseScene'); 
-            this.scene.pause();
-         });
-
-
-
-        this.time.delayedCall(2000, () => { this.physics.world.gravity.y = 200; });
-
-
-
-
+        
         
         this.death_flag = false;
         this.jumped = false;
@@ -344,27 +330,9 @@ class Pause extends Phaser.Scene {
 
     create()
     {
-        let scoreConfig = {
-            fontFamily: 'font1',
-            fontSize: '28px',
-            backgroundColor: '#051287',
-            color: '#e88017',
-            align: 'left',
-            padding: {
-            top: 5,
-            bottom: 5,
-            },
-            wordWrap: { width: 400} 
-        }
-
-        this.message = this.add.text(game.config.width/2, game.config.height/2, 'Welcome to Plummet, make ', scoreConfig).setOrigin(0.5);
-
         console.log("scene B");
-
-
         this.input.once('pointerdown', function () {
 
-            this.message.destroy();
             this.scene.resume('playScene');
             this.scene.stop();
 

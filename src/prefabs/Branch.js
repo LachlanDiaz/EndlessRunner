@@ -21,14 +21,6 @@ class Branch extends Phaser.Physics.Arcade.Sprite {
 
     update() {
 
-
-        if(cursors.left.isDown) {
-            console.log ("AAAAHHH");
-            // see: https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Components.Animation.html#play__anchor
-            // play(key [, ignoreIfPlaying] [, startFrame])
-        } 
-
-
         if (!this.jumped && !this.apex) {
             this.setVelocityY(-this.moveSpeed * 60);       //branch velocity updated every frame
         } else if (this.jumped && !this.apex) {
@@ -49,9 +41,14 @@ class Branch extends Phaser.Physics.Arcade.Sprite {
             }
         }
 
-        if (cursors.space.isDown) {
+        if (cursors.space.isDown & !this.jumped) {
             this.jumped = true;
             Phaser.Input.Keyboard.JustDown(cursors.up)
+        }
+
+        // destroy branch if it reaches the top of the screen
+        if(this.y < -10) {
+            this.destroy();
         }
     }
 }
