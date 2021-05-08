@@ -4,10 +4,7 @@ class Play2 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('rocket', './assets/rocket.png');
-        this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('cave', './assets/bg_02.png');
-        this.load.image('player', './assets/Asteriod(Round).png');
         this.load.image('splat', './assets/splat.png');
         this.load.image('block', './assets/block.png');
         this.load.image('border', './assets/Border.png');
@@ -318,6 +315,6 @@ class Play2 extends Phaser.Scene {
 
         this.guy.destroy();
 
-        this.time.delayedCall(2000, () => { this.scene.start('menuScene'); });
+        this.time.delayedCall(2000, () => { this.scene.start('gameOverScene'); });
     }
 }

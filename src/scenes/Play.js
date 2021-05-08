@@ -4,10 +4,7 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('rocket', './assets/rocket.png');
-        this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('well', './assets/well.png');
-        this.load.image('player', './assets/Asteriod(Round).png');
         this.load.image('splat', './assets/splat.png');
         this.load.image('block', './assets/block.png');
         this.load.image('border', './assets/Border.png');
@@ -53,7 +50,7 @@ class Play extends Phaser.Scene {
         this.add.image(game.config.width/2, 40, 'border').setScale(0.5);
 
         //add music and play
-        this.bgMusic = this.sound.add('bgm_01', {volume: 0.25});
+        this.bgMusic = this.sound.add('bgm_01', {volume: 0.05});
         this.bgMusic.loop = true;
         this.bgMusic.play();
 

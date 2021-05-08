@@ -1,21 +1,34 @@
-class Menu extends Phaser.Scene {
+class GameOver extends Phaser.Scene {
     constructor() {
-        super("menuScene");
+        super("gameOverScene");
     }
 
     preload() {
         // load audio
         this.load.audio('sfx_selecting', './assets/Selecting.wav');
         this.load.audio('sfx_selected', './assets/Selected.wav');
-        this.load.audio('bgm_00', './assets/Main_Menu.wav');
-        this.load.image('main_menu', './assets/main_menu.png');
+        this.load.audio('jingle', './assets/Game_Over.wav');
+        this.load.image('game_over', './assets/Game_Over_screen.png');
         this.load.image('pointer', './assets/pointer.png');
-        this.load.image('ex', './assets/x.png');
       }
 
     create() {
+        let menuConfig = {
+            fontFamily: 'font1',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+            fixedWidth: 0
+        }
 
-        this.bg = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'main_menu').setOrigin(0, 0);
+
+
+        this.bg = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'game_over').setOrigin(0, 0);
 
         cursors = this.input.keyboard.createCursorKeys();
 
@@ -28,11 +41,7 @@ class Menu extends Phaser.Scene {
         //define keys 
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-
-        this.bgMusic = this.sound.add('bgm_00', {volume: 0.5});
-        this.bgMusic.loop = true;
-        this.bgMusic.play();
-
+        this.sound.play('jingle', { volume: 0.5 });
     }
 
     update() {
@@ -67,7 +76,7 @@ class Menu extends Phaser.Scene {
         if (this.menu_option == 1) {
             this.pointer = this.add.image(80, 290, 'pointer');
         } else if (this.menu_option == 2) {
-            this.pointer = this.add.image(56, 378, 'pointer');
+            this.pointer = this.add.image(80, 378, 'pointer');
         } else if (this.menu_option == 3) {
            this.pointer = this.add.image(100, 500, 'pointer');
         }
@@ -79,25 +88,13 @@ class Menu extends Phaser.Scene {
                 gameTimer: Infinity    
             }
             this.sound.play('sfx_selected', { volume: 0.25 });
-            this.bgMusic.stop();
-            if (this.tutorial == true) {
-                this.scene.start('playScene');
-            } else {
-                this.scene.start('playScene2')
-            }
+            this.scene.start('playScene2');
         } else if (this.menu_option == 2) {
             this.sound.play('sfx_selected', { volume: 0.25 });
-            this.bgMusic.stop();
-            this.scene.start('creditsScene');
+            this.scene.start('menuScene');
         } else if (this.menu_option == 3) {
             this.sound.play('sfx_selected', { volume: 0.25 });
-           if (this.tutorial == true) {
-               this.tutorial = false;
-               this.ex.destroy();
-           } else {
-                this.tutorial = true;
-                this.ex = this.add.image(142, 502, 'ex').setScale(.80);
-           }
+            this.scene.start('creditsScene');
         }
     }
 }
