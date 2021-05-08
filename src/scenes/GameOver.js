@@ -7,7 +7,7 @@ class GameOver extends Phaser.Scene {
         // load audio
         this.load.audio('sfx_selecting', './assets/Selecting.wav');
         this.load.audio('sfx_selected', './assets/Selected.wav');
-        this.load.audio('jingle', './assets/Game_over.wav');
+        //this.load.audio('jingle', './assets/Game_over.wav');
         this.load.image('game_over', './assets/Game_Over_screen.png');
         this.load.image('pointer', './assets/pointer.png');
       }
@@ -42,7 +42,7 @@ class GameOver extends Phaser.Scene {
 
         this.message = this.add.text(320, 443, score + "m", menuConfig);
 
-        this.sound.play('jingle', { volume: 0.5 });
+        //this.sound.play('jingle', { volume: 0.5 });
     }
 
     update() {
