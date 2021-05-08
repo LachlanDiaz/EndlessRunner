@@ -10,6 +10,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
         this.load.image('main_menu', './assets/main_menu.png');
         this.load.image('pointer', './assets/pointer.png');
+        this.load.image('ex', './assets/x.png');
       }
 
     create() {
@@ -89,6 +90,7 @@ class Menu extends Phaser.Scene {
             this.pointer = this.add.image(80, 378, 'pointer');
         } else if (this.menu_option == 3) {
            this.pointer = this.add.image(100, 500, 'pointer');
+           //this.ex = this.add.image(142, 502, 'ex').setScale(.80);
         }
     }
 }

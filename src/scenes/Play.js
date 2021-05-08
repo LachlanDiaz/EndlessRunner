@@ -9,6 +9,9 @@ class Play extends Phaser.Scene {
         this.load.image('well', './assets/well.png');
         this.load.image('player', './assets/Asteriod(Round).png');
         this.load.image('splat', './assets/splat.png');
+        this.load.image('block', './assets/block.png');
+        this.load.image('border', './assets/Border.png');
+        this.load.image('text_border', './assets/TextBorder.png');
         /*  Load sprite atlas. Kendrick's note: currently dont have dedicated load scene, not sure how u wanna handle
             scenes but we may want to create a separate load.js if we use dif scenes for tutorial(well)/game(cave)
         */
@@ -53,6 +56,8 @@ class Play extends Phaser.Scene {
         //place well background
         this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
 
+        this.add.image(game.config.width/2, 40, 'border').setScale(0.5);
+
         //add music and play
         this.bgMusic = this.sound.add('bgm_01', {volume: 0.25});
         this.bgMusic.loop = true;
@@ -63,7 +68,25 @@ class Play extends Phaser.Scene {
 
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
-            let groundTile = this.physics.add.sprite(i, game.config.height - 560, 'platformer_atlas', 'block').setScale(SCALE).setOrigin(0);
+            let groundTile = this.physics.add.sprite(i, game.config.height - 560, 'block').setScale(1).setOrigin(0);
+            groundTile.body.immovable = true;
+            groundTile.body.allowGravity = false;
+            this.ground.add(groundTile);
+        }
+        /*for(let i = 0; i < game.config.width; i += tileSize) {
+            let groundTile = this.physics.add.sprite(i, game.config.height - 480, 'block').setScale(1).setOrigin(0);
+            groundTile.body.immovable = true;
+            groundTile.body.allowGravity = false;
+            this.ground.add(groundTile);
+        }*/
+        for(let i = 0; i < game.config.height; i += tileSize) {
+            let groundTile = this.physics.add.sprite(10, i, 'block').setScale(1).setOrigin(0);
+            groundTile.body.immovable = true;
+            groundTile.body.allowGravity = false;
+            this.ground.add(groundTile);
+        }
+        for(let i = 0; i < game.config.height; i += tileSize) {
+            let groundTile = this.physics.add.sprite(game.config.width - 22, i, 'block').setScale(1).setOrigin(0);
             groundTile.body.immovable = true;
             groundTile.body.allowGravity = false;
             this.ground.add(groundTile);
@@ -126,9 +149,9 @@ class Play extends Phaser.Scene {
         let scoreConfig = {
             fontFamily: 'font1',
             fontSize: '28px',
-            backgroundColor: '#b56612',
+            //backgroundColor: '#b56612',
             color: '#843605',
-            align: 'right',
+            align: 'left',
             padding: {
             top: 5,
             bottom: 5,
@@ -160,7 +183,7 @@ class Play extends Phaser.Scene {
             this.gameOver = true;
         }, null, this);
 
-        this.fallRight = this.add.text(game.config.width - borderUISize - borderPadding - 120, borderUISize + borderPadding*2, this.fall_distance + "m", scoreConfig);
+        this.fallRight = this.add.text(game.config.width/2 - 60, 20, this.fall_distance + "m", scoreConfig);
 
 
         this.input.once('pointerup', function () {
@@ -364,29 +387,58 @@ class Pause extends Phaser.Scene {
     {
         let scoreConfig = {
             fontFamily: 'font1',
-            fontSize: '28px',
-            backgroundColor: '#051287',
+            fontSize: '20px',
+            //backgroundColor: '#051287',
             color: '#e88017',
             align: 'left',
             padding: {
             top: 5,
             bottom: 5,
             },
-            wordWrap: { width: 400} 
+            wordWrap: { width: 300} 
         }
 
-        this.message = this.add.text(game.config.width/2, game.config.height/2, 'Welcome to Plummet, make ', scoreConfig).setOrigin(0.5);
+        let spaceConfig = {
+            fontFamily: 'font1',
+            fontSize: '18px',
+            //backgroundColor: '#051287',
+            color: '#b32502',
+            align: 'left',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+            wordWrap: { width: 300} 
+        }
+
+        this.border = this.add.image(game.config.width/2, game.config.height/2, 'text_border');
+        this.message = this.add.text(105, 225, 'So you jumped in huh? Well then you dont have much time so I will explain quickly.', scoreConfig);
+        this.prompt = this.add.text(105, 325, 'Press [Space] to continue...', spaceConfig);
 
         console.log("scene B");
 
 
-        this.input.once('pointerdown', function () {
-
+        this.keyObj = this.input.keyboard.addKey('SPACE');  // Get key object
+        this.keyObj.on('down', function() {
             this.message.destroy();
-            this.scene.resume('playScene');
-            this.scene.stop();
-
+            this.message = this.add.text(105, 225, 'You move with the [left] & [right] arrow keys.', scoreConfig);
+            this.keyObj.on('down', function() {
+                this.message.destroy();
+                this.message = this.add.text(105, 225, 'Press [Space] to stop your downward momentum.', scoreConfig);
+                this.keyObj.on('down', function() {
+                    this.message.destroy();
+                    this.message = this.add.text(105, 225, 'Your current depth is shown on that little counter above you.', scoreConfig);
+                    this.keyObj.on('down', function() {
+                        this.message.destroy();
+                        this.message = this.add.text(105, 225, 'Make sure to avoid the branches and bats or else its GAMEOVER! Good Luck!', scoreConfig);
+                        this.keyObj.on('down', function() {
+                            this.message.destroy();
+                            this.scene.resume('playScene');
+                            this.scene.stop();
+                        }, this);
+                    }, this);
+                }, this);
+            }, this);
         }, this);
     }
-
 }
