@@ -49,7 +49,7 @@ class Menu extends Phaser.Scene {
             gameTimer: Infinity    
             }
             this.sound.play('sfx_select');
-            this.scene.start('playScene2');    
+            this.scene.start('playScene');    
         }
 
 
