@@ -74,11 +74,11 @@ class GameOver extends Phaser.Scene {
     }
     add_pointer() {
         if (this.menu_option == 1) {
-            this.pointer = this.add.image(80, 290, 'pointer');
+            this.pointer = this.add.image(145, 285, 'pointer');
         } else if (this.menu_option == 2) {
-            this.pointer = this.add.image(80, 378, 'pointer');
+            this.pointer = this.add.image(145, 343, 'pointer');
         } else if (this.menu_option == 3) {
-           this.pointer = this.add.image(100, 500, 'pointer');
+           this.pointer = this.add.image(145, 400, 'pointer');
         }
     }
 

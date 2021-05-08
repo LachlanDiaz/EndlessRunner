@@ -9,9 +9,7 @@ class Play extends Phaser.Scene {
         this.load.image('block', './assets/block.png');
         this.load.image('border', './assets/Border.png');
         this.load.image('text_border', './assets/TextBorder.png');
-        /*  Load sprite atlas. Kendrick's note: currently dont have dedicated load scene, not sure how u wanna handle
-            scenes but we may want to create a separate load.js if we use dif scenes for tutorial(well)/game(cave)
-        */
+        /*  Load sprite atlas  */
         this.load.atlas('sprite_atlas', './assets/sprite_atlas.png', './assets/sprites.json');
         this.load.audio('bgm_01', './assets/Falling.wav');
         this.load.audio('flap', './assets/Flap.wav');
