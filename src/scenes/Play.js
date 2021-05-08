@@ -29,8 +29,10 @@ class Play extends Phaser.Scene {
         this.ACCELERATION = 200;
         this.DRAG = 200;    // DRAG < ACCELERATION = icy slide
         
-
-
+        //stoping the tutorial
+        this.max_bats = 0;
+        this.max_branches = 0;
+        this.checker = false;
 
         // delayed calls for tutorial
         this.time.delayedCall(100, () => {
@@ -40,7 +42,7 @@ class Play extends Phaser.Scene {
 
 
 
-        this.time.delayedCall(4000, () => { this.physics.world.gravity.y = 100; });
+        //this.time.delayedCall(4000, () => { this.physics.world.gravity.y = 100; });
 
 
 
@@ -185,14 +187,6 @@ class Play extends Phaser.Scene {
 
         this.fallRight = this.add.text(game.config.width/2 - 60, 20, this.fall_distance + "m", scoreConfig);
 
-
-        this.input.once('pointerup', function () {
-
-            
-            this.scene.launch('pauseScene'); 
-            this.scene.pause();
-
-        }, this);
     }
 
     addBranch() {
@@ -216,8 +210,11 @@ class Play extends Phaser.Scene {
     spawnBranch() {
         let delay = Phaser.Math.Between(600,1000)
         this.time.delayedCall(delay, () => { 
-            this.addBranch(); 
-            this.spawnBranch();
+            this.addBranch();
+            this.max_branches++
+            if (this.max_branches < 30) {
+                this.spawnBranch();
+            }
         });
     }
 
@@ -225,7 +222,10 @@ class Play extends Phaser.Scene {
         let delay = Phaser.Math.Between(1000, 5000)
         this.time.delayedCall(delay, () => { 
             this.addBat(); 
-            this.spawnBat();
+            this.max_bats++
+            if (this.max_bats < 10) {
+                this.spawnBat();
+            }
         });
     }
 
@@ -281,7 +281,7 @@ class Play extends Phaser.Scene {
                 this.guy.anims.play('fall');                    //resume idle fall anim
             }
 
-            if (cursors.space.isDown & !this.jumped) {
+            if (cursors.space.isDown && !this.jumped) {
                 this.flap.play();
                 this.guy.anims.play('jump'); 
                 this.jumped = true;
@@ -299,10 +299,24 @@ class Play extends Phaser.Scene {
                 this.physics.overlap(this.guy, this.branchGroup, this.death, null, this);
                 this.physics.overlap(this.guy, this.batGroup, this.death, null, this);
             }
+
+            if (this.max_bats >= 10 && this.max_branches >= 30 && !this.checker) {
+                this.complete();
+            }
         }
         else {
             this.well.tilePositionY += fallspeed;
         }
+    }
+
+    complete() {
+        this.checker = true;
+        this.time.delayedCall(10000, () => {
+            this.physics.world.gravity.y = 100;
+            this.scene.launch('pauseScene2'); 
+            this.scene.pause();
+            });
+        
     }
 
 
@@ -367,11 +381,6 @@ class Play extends Phaser.Scene {
 
         this.guy.destroy();
 
-
-
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'dead', scoreConfig).setOrigin(0.5);
-        
-
         this.time.delayedCall(2000, () => { this.scene.start('menuScene'); });
         //this.scene.stop();
 
@@ -415,9 +424,6 @@ class Pause extends Phaser.Scene {
         this.message = this.add.text(105, 225, 'So you jumped in huh? Well then you dont have much time so I will explain quickly.', scoreConfig);
         this.prompt = this.add.text(105, 325, 'Press [Space] to continue...', spaceConfig);
 
-        console.log("scene B");
-
-
         this.keyObj = this.input.keyboard.addKey('SPACE');  // Get key object
         this.keyObj.on('down', function() {
             this.message.destroy();
@@ -439,6 +445,51 @@ class Pause extends Phaser.Scene {
                     }, this);
                 }, this);
             }, this);
+        }, this);
+    }
+}
+
+class Pause2 extends Phaser.Scene {
+    constructor() {
+        super("pauseScene2");
+    }
+
+    create()
+    {
+        let scoreConfig = {
+            fontFamily: 'font1',
+            fontSize: '20px',
+            //backgroundColor: '#051287',
+            color: '#e88017',
+            align: 'left',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+            wordWrap: { width: 300} 
+        }
+
+        let spaceConfig = {
+            fontFamily: 'font1',
+            fontSize: '18px',
+            //backgroundColor: '#051287',
+            color: '#b32502',
+            align: 'left',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+            wordWrap: { width: 300} 
+        }
+
+        this.border = this.add.image(game.config.width/2, game.config.height/2, 'text_border');
+        this.message = this.add.text(105, 225, 'Looks like you have got the hang of it. Time to go deeper.', scoreConfig);
+        this.prompt = this.add.text(105, 325, 'Press [Space] to continue...', spaceConfig);
+
+        this.keyObj = this.input.keyboard.addKey('SPACE');  // Get key object
+        this.keyObj.on('down', function() {
+            this.scene.resume('playScene');
+            this.scene.stop();
         }, this);
     }
 }

@@ -1,6 +1,6 @@
 class Play2 extends Phaser.Scene {
     constructor() {
-        super("play2Scene");
+        super("playScene2");
     }
 
     preload() {
@@ -9,6 +9,9 @@ class Play2 extends Phaser.Scene {
         this.load.image('well', './assets/well.png');
         this.load.image('player', './assets/Asteriod(Round).png');
         this.load.image('splat', './assets/splat.png');
+        this.load.image('block', './assets/block.png');
+        this.load.image('border', './assets/Border.png');
+        this.load.image('text_border', './assets/TextBorder.png');
         /*  Load sprite atlas. Kendrick's note: currently dont have dedicated load scene, not sure how u wanna handle
             scenes but we may want to create a separate load.js if we use dif scenes for tutorial(well)/game(cave)
         */
@@ -25,10 +28,8 @@ class Play2 extends Phaser.Scene {
         this.JUMP_VELOCITY = 200;
         this.ACCELERATION = 200;
         this.DRAG = 200;    // DRAG < ACCELERATION = icy slide
-        
+        this.physics.world.gravity.y = 100
 
-        
-        
         this.death_flag = false;
         this.jumped = false;
         this.apex = false;
@@ -38,6 +39,8 @@ class Play2 extends Phaser.Scene {
 
         //place well background
         this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
+
+        this.add.image(game.config.width/2, 40, 'border').setScale(0.5);
 
         //add music and play
         this.bgMusic = this.sound.add('bgm_01', {volume: 0.25});
@@ -49,7 +52,19 @@ class Play2 extends Phaser.Scene {
 
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
-            let groundTile = this.physics.add.sprite(i, game.config.height - 560, 'platformer_atlas', 'block').setScale(SCALE).setOrigin(0);
+            let groundTile = this.physics.add.sprite(i, game.config.height - 480, 'block').setScale(1).setOrigin(0);
+            groundTile.body.immovable = true;
+            groundTile.body.allowGravity = false;
+            this.ground.add(groundTile);
+        }
+        for(let i = 0; i < game.config.height; i += tileSize) {
+            let groundTile = this.physics.add.sprite(10, i, 'block').setScale(1).setOrigin(0);
+            groundTile.body.immovable = true;
+            groundTile.body.allowGravity = false;
+            this.ground.add(groundTile);
+        }
+        for(let i = 0; i < game.config.height; i += tileSize) {
+            let groundTile = this.physics.add.sprite(game.config.width - 22, i, 'block').setScale(1).setOrigin(0);
             groundTile.body.immovable = true;
             groundTile.body.allowGravity = false;
             this.ground.add(groundTile);
@@ -58,8 +73,8 @@ class Play2 extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
         
         /* create player and declare sprite */
-        this.guy = this.physics.add.sprite(240, game.config.height - 512, 'sprite_atlas', 'fall01').setScale();
-        this.guy.setCollideWorldBounds(true);
+        this.guy = this.physics.add.sprite(240, -40, 'sprite_atlas', 'fall01').setScale();
+        //this.guy.setCollideWorldBounds(true);
         this.guy.setMaxVelocity(100, 1000000);
         this.guy.setSize(30, 60, true);
         this.physics.add.collider(this.guy, this.ground);
@@ -112,9 +127,9 @@ class Play2 extends Phaser.Scene {
         let scoreConfig = {
             fontFamily: 'font1',
             fontSize: '28px',
-            backgroundColor: '#b56612',
+            //backgroundColor: '#b56612',
             color: '#843605',
-            align: 'right',
+            align: 'left',
             padding: {
             top: 5,
             bottom: 5,
@@ -146,16 +161,8 @@ class Play2 extends Phaser.Scene {
             this.gameOver = true;
         }, null, this);
 
-        this.fallRight = this.add.text(game.config.width - borderUISize - borderPadding - 120, borderUISize + borderPadding*2, this.fall_distance + "m", scoreConfig);
+        this.fallRight = this.add.text(game.config.width/2 - 60, 20, this.fall_distance + "m", scoreConfig);
 
-
-        this.input.once('pointerup', function () {
-
-            
-            this.scene.launch('pauseScene'); 
-            this.scene.pause();
-
-        }, this);
     }
 
     addBranch() {
@@ -179,8 +186,9 @@ class Play2 extends Phaser.Scene {
     spawnBranch() {
         let delay = Phaser.Math.Between(600,1000)
         this.time.delayedCall(delay, () => { 
-            this.addBranch(); 
+            this.addBranch();
             this.spawnBranch();
+
         });
     }
 
@@ -244,7 +252,7 @@ class Play2 extends Phaser.Scene {
                 this.guy.anims.play('fall');                    //resume idle fall anim
             }
 
-            if (cursors.space.isDown & !this.jumped) {
+            if (cursors.space.isDown && !this.jumped) {
                 this.flap.play();
                 this.guy.anims.play('jump'); 
                 this.jumped = true;
@@ -254,14 +262,11 @@ class Play2 extends Phaser.Scene {
                 this.flap.play();
             }
 
-            if (this.guy.y >= game.config.height - 200) {
-                this.guy.setCollideWorldBounds(false);
-            }
-
             if (!this.death_flag) {
                 this.physics.overlap(this.guy, this.branchGroup, this.death, null, this);
                 this.physics.overlap(this.guy, this.batGroup, this.death, null, this);
             }
+
         }
         else {
             this.well.tilePositionY += fallspeed;
@@ -313,30 +318,6 @@ class Play2 extends Phaser.Scene {
 
         this.guy.destroy();
 
-
-
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'dead', scoreConfig).setOrigin(0.5);
-        
-
         this.time.delayedCall(2000, () => { this.scene.start('menuScene'); });
-
     }
-}
-
-class Pause extends Phaser.Scene {
-    constructor() {
-        super("pauseScene");
-    }
-
-    create()
-    {
-        console.log("scene B");
-        this.input.once('pointerdown', function () {
-
-            this.scene.resume('playScene');
-            this.scene.stop();
-
-        }, this);
-    }
-
 }

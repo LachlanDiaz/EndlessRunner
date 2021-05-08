@@ -37,13 +37,6 @@ class Menu extends Phaser.Scene {
 
         this.add_pointer();
 
-        //show menu text
-        this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'FALLER 0.1', menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2, 'Use ←→ arrows to move', menuConfig).setOrigin(0.5);
-        menuConfig.backgroundColor = '#00FF00';
-        menuConfig.color = '#000';
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press (space) to play', menuConfig).setOrigin(0.5);
-
         //define keys 
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
@@ -56,7 +49,7 @@ class Menu extends Phaser.Scene {
             gameTimer: Infinity    
             }
             this.sound.play('sfx_select');
-            this.scene.start('playScene');    
+            this.scene.start('playScene2');    
         }
 
 
