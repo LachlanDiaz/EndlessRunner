@@ -6,7 +6,7 @@ class Play2 extends Phaser.Scene {
     preload() {
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('well', './assets/well.png');
+        this.load.image('cave', './assets/bg_02.png');
         this.load.image('player', './assets/Asteriod(Round).png');
         this.load.image('splat', './assets/splat.png');
         this.load.image('block', './assets/block.png');
@@ -16,7 +16,7 @@ class Play2 extends Phaser.Scene {
             scenes but we may want to create a separate load.js if we use dif scenes for tutorial(well)/game(cave)
         */
         this.load.atlas('sprite_atlas', './assets/sprite_atlas.png', './assets/sprites.json');
-        this.load.audio('bgm_01', './assets/Falling.wav');
+        this.load.audio('bgm_02', './assets/Cave.wav');
         this.load.audio('flap', './assets/Flap.wav');
         this.load.audio('death_sound', './assets/Collisionbreak.wav');
 
@@ -37,13 +37,13 @@ class Play2 extends Phaser.Scene {
 
         this.fall_distance = 0;
 
-        //place well background
-        this.well = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'well').setOrigin(0, 0);
+        //place cave background
+        this.cave = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'cave').setOrigin(0, 0);
 
         this.add.image(game.config.width/2, 40, 'border').setScale(0.5);
 
         //add music and play
-        this.bgMusic = this.sound.add('bgm_01', {volume: 0.25});
+        this.bgMusic = this.sound.add('bgm_02', {volume: 0.25});
         this.bgMusic.loop = true;
         this.bgMusic.play();
 
@@ -167,7 +167,7 @@ class Play2 extends Phaser.Scene {
 
     addBranch() {
         let invert = Phaser.Math.Between(0, 1);
-        let branch = new Branch(this, invert);
+        let branch = new glowBranch(this, invert);
         branch.setSize(130, 5, true);
         this.branchGroup.add(branch);
     }
@@ -227,11 +227,11 @@ class Play2 extends Phaser.Scene {
             }
                 
             if (!this.jumped && !this.apex) {
-                this.well.tilePositionY += this.moveSpeed;
+                this.cave.tilePositionY += this.moveSpeed;
                 // this.branch01.setVelocityY(-this.moveSpeed * 60);       //branch velocity updated every frame
             } else if (this.jumped && !this.apex) {
                                             //jump anim
-                this.well.tilePositionY += this.moveSpeed;
+                this.cave.tilePositionY += this.moveSpeed;
                 this.moveSpeed -= (fallspeed / 10);
                 // this.branch01.setVelocityY(-this.moveSpeed * 60);
                 //console.log (this.moveSpeed);
@@ -241,7 +241,7 @@ class Play2 extends Phaser.Scene {
             }
 
             if (this.apex) {
-                this.well.tilePositionY += this.moveSpeed;
+                this.cave.tilePositionY += this.moveSpeed;
                 if (this.moveSpeed < fallspeed) {
                     this.moveSpeed += (fallspeed / 10);
                     // this.branch01.setVelocityY(-this.moveSpeed * 60);
@@ -269,7 +269,7 @@ class Play2 extends Phaser.Scene {
 
         }
         else {
-            this.well.tilePositionY += fallspeed;
+            this.cave.tilePositionY += fallspeed;
         }
     }
 

@@ -40,14 +40,6 @@ class Play extends Phaser.Scene {
             this.scene.pause();
          });
 
-
-
-        //this.time.delayedCall(4000, () => { this.physics.world.gravity.y = 100; });
-
-
-
-
-        
         this.death_flag = false;
         this.jumped = false;
         this.apex = false;

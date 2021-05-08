@@ -37,19 +37,15 @@ class Menu extends Phaser.Scene {
 
         this.add_pointer();
 
+        this.tutorial = false;
+
         //define keys 
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
     update() {
         if (Phaser.Input.Keyboard.JustDown(keySPACE)) {
-            // easy mode
-            game.settings = {
-            spaceshipSpeed: 3,
-            gameTimer: Infinity    
-            }
-            this.sound.play('sfx_select');
-            this.scene.start('playScene');    
+              this.selection();
         }
 
 
@@ -84,6 +80,31 @@ class Menu extends Phaser.Scene {
         } else if (this.menu_option == 3) {
            this.pointer = this.add.image(100, 500, 'pointer');
            //this.ex = this.add.image(142, 502, 'ex').setScale(.80);
+        }
+    }
+
+    selection() {
+        if (this.menu_option == 1) {
+            game.settings = {
+                //spaceshipSpeed: 3,
+                gameTimer: Infinity    
+            }
+            this.sound.play('sfx_select');
+            if (this.tutorial == true) {
+                this.scene.start('playScene');
+            } else {
+                this.scene.start('playScene2')
+            }
+        } else if (this.menu_option == 2) {
+            close();
+        } else if (this.menu_option == 3) {
+           if (this.tutorial == true) {
+               this.tutorial = false;
+               this.ex.destroy();
+           } else {
+                this.tutorial = true;
+                this.ex = this.add.image(142, 502, 'ex').setScale(.80);
+           }
         }
     }
 }
