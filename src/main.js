@@ -1,8 +1,12 @@
 // game configureation
 let config = {
+    parent: 'myGame',
     type: Phaser.CANVAS,
     width: 480,
     height: 640,
+    scale: {
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
     physics: {
         default: 'arcade',
         arcade: {
@@ -19,8 +23,7 @@ let config = {
 let game = new Phaser.Game(config);
 
 let cursors;
-//let borderUISize = game.config.height / 15;
-//let borderPadding = borderUISize / 3;
+let score;
 let fallspeed = 4;
 const tileSize = 20;
 const SCALE = 0.5;

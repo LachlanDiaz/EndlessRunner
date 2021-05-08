@@ -15,9 +15,8 @@ class GameOver extends Phaser.Scene {
     create() {
         let menuConfig = {
             fontFamily: 'font1',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
+            fontSize: '24px',
+            color: '#b30e0e',
             align: 'right',
             padding: {
             top: 5,
@@ -40,6 +39,8 @@ class GameOver extends Phaser.Scene {
 
         //define keys 
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.message = this.add.text(320, 443, score + "m", menuConfig);
 
         this.sound.play('jingle', { volume: 0.5 });
     }
@@ -74,11 +75,11 @@ class GameOver extends Phaser.Scene {
     }
     add_pointer() {
         if (this.menu_option == 1) {
-            this.pointer = this.add.image(145, 285, 'pointer');
+            this.pointer = this.add.image(160, 285, 'pointer');
         } else if (this.menu_option == 2) {
-            this.pointer = this.add.image(145, 343, 'pointer');
+            this.pointer = this.add.image(150, 343, 'pointer');
         } else if (this.menu_option == 3) {
-           this.pointer = this.add.image(145, 400, 'pointer');
+           this.pointer = this.add.image(175, 400, 'pointer');
         }
     }
 

@@ -313,6 +313,8 @@ class Play2 extends Phaser.Scene {
 
         this.guy.destroy();
 
+        score = this.fall_distance;
+
         this.time.delayedCall(2000, () => { this.scene.start('gameOverScene'); });
     }
 }
